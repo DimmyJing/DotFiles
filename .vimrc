@@ -13,6 +13,8 @@ Plugin 'uguu-org/vim-matrix-screensaver'
 Plugin 'Valloric/YouCompleteMe'
 "Another plugin for autocompletion
 Plugin 'SirVer/ultisnips'
+"Clang-based highlighting
+"Plugin 'arakashic/chromatica.nvim'
 call vundle#end()
 filetype plugin indent on
 "VundleEnd
@@ -62,8 +64,10 @@ let g:ycm_autoclose_preview_window_after_completion = 1
 "MapKeys
 let mapleader = "z"
 
-nnoremap <silent> <leader>sv :vsplit $MYVIMRC<cr>
-nnoremap <silent> <leader>ev :edit $MYVIMRC<cr>
+"nnoremap <silent> <leader>sv :vsplit $MYVIMRC<cr>
+nnoremap <silent> <leader>sv :vsplit ~/.vimrc<cr>
+"nnoremap <silent> <leader>ev :edit $MYVIMRC<cr>
+nnoremap <silent> <leader>ev :edit ~/.vimrc<cr>
 nnoremap <silent> <leader>st :vsplit ~/Program/doc/TODO.txt<cr>
 nnoremap <silent> <leader>et :edit ~/Program/doc/TODO.txt<cr>
 nnoremap <silent> <leader>sd :execute ":vsplit " . substitute(substitute(substitute(expand('%:p'), '\.cpp', '', 'g'), '\.h', '', 'g'), '\/src\/', '\/doc\/', 'g') . '.txt'<cr>
@@ -75,6 +79,7 @@ nnoremap <silent> <leader>ce :cclose<cr>
 nnoremap <silent> <leader>m :Matrix<cr>
 nnoremap <silent> <leader>q :wq<cr>
 nnoremap <silent> <leader>w <c-w>
+nnoremap <silent> <leader>ch :e ++enc=gb2312<cr>
 inoremap jk <Esc>
 vnoremap jk <Esc>
 
@@ -82,6 +87,7 @@ vnoremap jk <Esc>
 "Abbreviations
 iabbrev tem template<class T>
 iabbrev tem2 template<class T1, class T2>
+iabbrev logline printf("Error: %s, File: %s, Line: %d\n", "", __FILE__, __LINE__);<esc>F"i
 
 
 "Spellings
@@ -98,3 +104,12 @@ iabbrev )_ ()
 set rtp+=/usr/local/lib/python3.5/dist-packages/powerline/bindings/vim/
 set laststatus=2
 set t_Co=256
+
+
+"Highlighting
+"let g:chromatica#libclang_path='/Users/jimmyding/.vim/bundle/YouCompleteMe/third_party/ycmd/libclang.dylib'
+"let g:chromatica#enable_at_startup=1
+
+
+"Remember last pos
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
