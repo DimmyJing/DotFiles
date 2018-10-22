@@ -5,8 +5,8 @@ set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-"Dracula Color Scheme
-Plugin 'dracula/vim'
+"Iceberg color scheme
+Plugin 'cocopon/iceberg.vim'
 "ScreenSaver just for fun
 Plugin 'uguu-org/vim-matrix-screensaver'
 "AutoCompletion
@@ -17,6 +17,12 @@ Plugin 'SirVer/ultisnips'
 Plugin 'vim-airline/vim-airline'
 "File tree
 Plugin 'scrooloose/nerdtree'
+"Bad Whitespace
+Plugin 'bitc/vim-bad-whitespace'
+"Python Mode
+Plugin 'python-mode/python-mode'
+"Highlight for vue
+Plugin 'posva/vim-vue'
 call vundle#end()
 filetype plugin indent on
 "VundleEnd
@@ -27,13 +33,13 @@ if exists("b:current_syntax")
 endif
 
 
-colorscheme dracula
+colorscheme iceberg
 syntax on
 
 "ScrollbarWidth
 set sw=4
 "TagSelect
-set ts =4
+set ts=4
 
 set whichwrap=<,>,[,]
 set backspace=indent,eol,start
@@ -53,6 +59,7 @@ set nospell
 set wrap
 set viminfo='100,<1000,s100,h
 set tabstop=4
+"set clipboard=unnamed
 
 
 "YouCompleteMe stuff
@@ -62,39 +69,40 @@ let g:ycm_confirm_extra_conf = 0
 let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_python_binary_path = 'python3'
+"python-mode
+let g:pymode_python = 'python3'
+let g:pymode_lint_cwindow = 0
+"let g:pymode_lint_options_pep8 = {'max_line_length': 256}
+
 
 
 "MapKeys
 let mapleader = "z"
 
-"nnoremap <silent> <leader>sv :vsplit $MYVIMRC<cr>
 nnoremap <silent> <leader>sv :vsplit ~/.vimrc<cr>
-"nnoremap <silent> <leader>ev :edit $MYVIMRC<cr>
 nnoremap <silent> <leader>ev :edit ~/.vimrc<cr>
-nnoremap <silent> <leader>st :vsplit ~/Program/doc/TODO.txt<cr>
-nnoremap <silent> <leader>et :edit ~/Program/doc/TODO.txt<cr>
-nnoremap <silent> <leader>se :copen<cr>
-nnoremap <silent> <leader>ce :cclose<cr>
 nnoremap <silent> <leader>m :Matrix<cr>
-nnoremap <silent> <leader>q :wq<cr>
-nnoremap <silent> <leader>w <c-w>
 nnoremap <silent> <leader>n :NERDTreeToggle<cr>
+nnoremap <silent> <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
-"inoremap <silent> jk <esc>:set timeoutlen=1000<cr>:set relativenumber<cr>
 inoremap <silent> jk <esc>:set timeoutlen=1000<cr>
 vnoremap <silent> jk <esc>:set timeoutlen=1000<cr>
-"inoremap <silent> <esc> <esc>:set timeoutlen=1000<cr>:set relativenumber<cr>
 inoremap <silent> <esc> <esc>:set timeoutlen=1000<cr>
 vnoremap <silent> <esc> <esc>:set timeoutlen=1000<cr>
-nnoremap <silent> i :set timeoutlen=100<cr>:set norelativenumber<cr>i
-nnoremap <silent> I :set timeoutlen=100<cr>:set norelativenumber<cr>I
-nnoremap <silent> a :set timeoutlen=100<cr>:set norelativenumber<cr>a
-nnoremap <silent> A :set timeoutlen=100<cr>:set norelativenumber<cr>A
-nnoremap <silent> o :set timeoutlen=100<cr>:set norelativenumber<cr>o
-nnoremap <silent> O :set timeoutlen=100<cr>:set norelativenumber<cr>O
-nnoremap <silent> v :set timeoutlen=100<cr>v
-nnoremap <silent> V :set timeoutlen=100<cr>V
-nnoremap <silent>  :set timeoutlen=100<cr>
+nnoremap <silent> i :set timeoutlen=200<cr>i
+nnoremap <silent> I :set timeoutlen=200<cr>I
+nnoremap <silent> a :set timeoutlen=200<cr>a
+nnoremap <silent> A :set timeoutlen=200<cr>A
+nnoremap <silent> o :set timeoutlen=200<cr>o
+nnoremap <silent> O :set timeoutlen=200<cr>O
+nnoremap <silent> v :set timeoutlen=200<cr>v
+nnoremap <silent> V :set timeoutlen=200<cr>V
+nnoremap <silent>  :set timeoutlen=200<cr>
+
+nnoremap <c-h> <c-w><c-h>
+nnoremap <c-j> <c-w><c-j>
+nnoremap <c-k> <c-w><c-k>
+nnoremap <c-l> <c-w><c-l>
 
 
 "Abbreviations
@@ -105,3 +113,9 @@ iabbrev logline printf("Error: %s, File: %s, Line: %d\n", "", __FILE__, __LINE__
 
 "Remember last pos
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+"Flag Whitespace
+au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
+
+
+"Nerdtree ignore files
+let NERDTreeIgnore=['\.pyc$', '\~$']
