@@ -5,8 +5,10 @@ set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-"Iceberg color scheme
+"Iceburg color scheme
 Plugin 'cocopon/iceberg.vim'
+"Color scheme
+Plugin 'flazz/vim-colorschemes'
 "ScreenSaver just for fun
 Plugin 'uguu-org/vim-matrix-screensaver'
 "AutoCompletion
@@ -103,6 +105,10 @@ nnoremap <c-h> <c-w><c-h>
 nnoremap <c-j> <c-w><c-j>
 nnoremap <c-k> <c-w><c-k>
 nnoremap <c-l> <c-w><c-l>
+
+nnoremap <silent> <leader>x :%!xxd<cr>
+
+nnoremap s @@
 
 
 "Abbreviations
