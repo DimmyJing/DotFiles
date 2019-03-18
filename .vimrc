@@ -7,24 +7,20 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 "Iceburg color scheme
 Plugin 'cocopon/iceberg.vim'
-"Color scheme
-Plugin 'flazz/vim-colorschemes'
-"ScreenSaver just for fun
-Plugin 'uguu-org/vim-matrix-screensaver'
 "AutoCompletion
 Plugin 'Valloric/YouCompleteMe'
 "Another plugin for autocompletion
 Plugin 'SirVer/ultisnips'
 "Fancy status bar
 Plugin 'vim-airline/vim-airline'
-"File tree
-Plugin 'scrooloose/nerdtree'
 "Bad Whitespace
 Plugin 'bitc/vim-bad-whitespace'
 "Python Mode
 Plugin 'python-mode/python-mode'
-"Highlight for vue
-Plugin 'posva/vim-vue'
+"For editing plists on mac
+Plugin 'darfink/vim-plist'
+"For julia
+Plugin 'JuliaEditorSupport/julia-vim'
 call vundle#end()
 filetype plugin indent on
 "VundleEnd
@@ -42,7 +38,6 @@ syntax on
 set sw=4
 "TagSelect
 set ts=4
-
 set whichwrap=<,>,[,]
 set backspace=indent,eol,start
 set number
@@ -74,8 +69,6 @@ let g:ycm_python_binary_path = 'python3'
 "python-mode
 let g:pymode_python = 'python3'
 let g:pymode_lint_cwindow = 0
-"let g:pymode_lint_options_pep8 = {'max_line_length': 256}
-
 
 
 "MapKeys
@@ -119,9 +112,3 @@ iabbrev logline printf("Error: %s, File: %s, Line: %d\n", "", __FILE__, __LINE__
 
 "Remember last pos
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-"Flag Whitespace
-au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
-
-
-"Nerdtree ignore files
-let NERDTreeIgnore=['\.pyc$', '\~$']
