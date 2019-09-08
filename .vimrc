@@ -40,14 +40,9 @@ endif
 colorscheme iceberg
 syntax on
 
-"ScrollbarWidth
-set sw=4
-"TagSelect
-set ts=4
+set shiftwidth=4
 set whichwrap=<,>,[,]
 set backspace=indent,eol,start
-set number
-set norelativenumber
 set showcmd
 set ruler
 set hlsearch
@@ -62,6 +57,8 @@ set nospell
 set wrap
 set viminfo='100,<1000,s100,h
 set tabstop=4
+set number
+set relativenumber
 "set clipboard=unnamed
 
 
@@ -88,9 +85,8 @@ let mapleader = "z"
 
 nnoremap <silent> <leader>sv :vsplit ~/.vimrc<cr>
 nnoremap <silent> <leader>ev :edit ~/.vimrc<cr>
-"nnoremap <silent> <leader>m :Matrix<cr>
-"nnoremap <silent> <leader>n :NERDTreeToggle<cr>
 nnoremap <silent> <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
+nnoremap <silent> <leader>l :set relativenumber!<CR>
 
 inoremap <silent> jk <esc>:set timeoutlen=1000<cr>
 vnoremap <silent> jk <esc>:set timeoutlen=1000<cr>
@@ -121,7 +117,3 @@ nnoremap s @@
 iabbrev tem template<class T>
 iabbrev tem2 template<class T1, class T2>
 iabbrev logline printf("Error: %s, File: %s, Line: %d\n", "", __FILE__, __LINE__);<esc>F"i
-
-
-"Remember last pos
-au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
