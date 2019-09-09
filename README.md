@@ -12,3 +12,4 @@
 + if using oh-my-zsh, enter your username in the corresponding spot in .zshrc
 + if using oh-my-zsh, do `cp .zshrc ~`
 + execute `echo source ~/.bash_aliases >> ~/.bash_profile` if mac, `echo source ~/.bash_aliases >> ~/.bashrc` if linux
++ import profile.json using iTerm
