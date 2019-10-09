@@ -27,6 +27,12 @@ Plugin 'lervag/vimtex'
 Plugin 'python-mode/python-mode'
 "CoffeeScript
 Plugin 'kchmck/vim-coffee-script'
+"Required for markdown
+Plugin 'godlygeek/tabular'
+"Markdown
+Plugin 'plasticboy/vim-markdown'
+"Markdown Preview
+Plugin 'iamcco/markdown-preview.nvim'
 call vundle#end()
 filetype plugin indent on
 "VundleEnd
@@ -69,7 +75,14 @@ let g:ycm_confirm_extra_conf = 0
 let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_python_binary_path = '/usr/local/bin/python3'
-"python-mode
+au FileType markdown,snippets let g:ycm_key_list_select_completion=[]
+au FileType markdown,snippets let g:ycm_key_list_previous_completion=[]
+"Ultisnip stuff
+let g:UltiSnipsSnippetDirectories = ['/Users/jimmyding/.vim/UltiSnips']
+let g:UltiSnipsExpandTrigger = '<tab>'
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+"python-mode stuff
 let g:pymode_python = 'python3'
 let g:pymode_lint_cwindow = 0
 "vimtex stuff
@@ -78,6 +91,10 @@ autocmd FileType tex nnoremap <buffer> <C-T> :!xelatex %<CR>
 autocmd FileType tex nnoremap <buffer> <C-E> :below split %:r.log<CR>
 autocmd FileType tex nnoremap <buffer> T :!open -a Skim %:r.pdf<CR><CR>
 autocmd BufWritePost *.tex :silent exec '!xelatex %'
+"markdown stuff
+let g:vim_markdown_math = 1
+let g:mkdp_open_to_the_world = 1
+let g:mkdp_echo_preview_url = 1
 
 
 "MapKeys
@@ -86,7 +103,8 @@ let mapleader = "z"
 nnoremap <silent> <leader>sv :vsplit ~/.vimrc<cr>
 nnoremap <silent> <leader>ev :edit ~/.vimrc<cr>
 nnoremap <silent> <leader>g :YcmCompleter GoToDefinitionElseDeclaration<CR>
-nnoremap <silent> <leader>l :set relativenumber!<CR>
+nnoremap <silent> <leader>l :set relativenumber!<cr>
+nnoremap <silent> <leader>mp :MarkdownPreview<cr>
 
 inoremap <silent> jk <esc>:set timeoutlen=1000<cr>
 vnoremap <silent> jk <esc>:set timeoutlen=1000<cr>
@@ -111,7 +129,6 @@ nnoremap <silent> <leader>x :%!xxd<cr>
 nnoremap <silent> <leader>z :call histdel('/')<cr>
 
 nnoremap s @@
-
 
 "Abbreviations
 iabbrev tem template<class T>
