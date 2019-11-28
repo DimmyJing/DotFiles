@@ -66,6 +66,7 @@ set tabstop=4
 set number
 set relativenumber
 "set clipboard=unnamed
+set nofoldenable " temporary, disables folding
 
 
 "YouCompleteMe stuff
@@ -93,7 +94,7 @@ autocmd FileType tex nnoremap <buffer> T :!open -a Skim %:r.pdf<CR><CR>
 autocmd BufWritePost *.tex :silent exec '!xelatex %'
 "markdown stuff
 let g:vim_markdown_math = 1
-let g:mkdp_open_to_the_world = 1
+let g:mkdp_open_to_the_world = 0
 let g:mkdp_echo_preview_url = 1
 
 
