@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from termcolor import colored
 from shutil import which
 import subprocess
