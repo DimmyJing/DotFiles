@@ -3,10 +3,6 @@ truncated_path="%B%F{white}%$num_dirs~%f"
 decoration="%F{red}❱%F{magenta}❱%F{cyan}❱%f"
 PROMPT='$truncated_path $decoration '
 zle_highlight=(default:bold)
-#test_text='❰❱'
-#check_mark='✔✗'
-#non_zero_return_value="%(0?.%F{green}✔.%F{yellow}✗%f)"
-#RPROMPT='$non_zero_return_value'
 
 function zle-keymap-select zle-line-init
 {
