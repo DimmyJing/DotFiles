@@ -37,10 +37,10 @@ def call(op):
 
 
 def validate(prompt):
-    ans = input(prompt + " (y/n)")
+    ans = input(prompt + " (y/n) ")
     if ans.lower()[0] == "y":
         return True
-    elif ans.lower()[1] == "n":
+    elif ans.lower()[0] == "n":
         return False
     return validate(prompt)
 
