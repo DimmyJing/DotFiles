@@ -21,7 +21,7 @@ Plug 'bitc/vim-bad-whitespace'
 "LaTeX
 " Plug 'lervag/vimtex'
 "Python
-Plug 'python-mode/python-mode'
+Plug 'python-mode/python-mode', {'for': 'python', 'branch': 'develop'}
 "CoffeeScript
 " Plug 'kchmck/vim-coffee-script'
 "Required for markdown
@@ -116,6 +116,10 @@ nnoremap <silent> <leader>z :call histdel('/')<cr>
 nnoremap s @@
 
 
+"let g:loaded_youcompleteme = 1
+"let g:loaded_airline = 1
+
+
 augroup YCM
 	autocmd!
 	autocmd FileType markdown,tex,snippets let g:loaded_youcompleteme = 1
@@ -130,7 +134,16 @@ augroup LaTeX
 	autocmd BufWritePost *.tex :silent exec '!xelatex -output-directory out %'
 augroup END
 
+augroup OTHERS
+	autocmd!
+	autocmd BufReadPost *
+		 \ if line("'\"") > 0 && line("'\"") <= line("$") |
+		 \   exe "normal! g`\"" |
+		 \ endif
+augroup END
+
 autocmd!
+
 
 colorscheme iceberg
 syntax on

@@ -29,7 +29,7 @@ def setupzsh():
     call("cp ./angle.zsh-theme ~/.oh-my-zsh/themes")
     name = pwd.getpwuid(os.getuid()).pw_name
     call(fr'echo "export ZSH=\"/home/{name}/.oh-my-zsh\"\n'
-         '$(cat .zshrc)" > ~/.zshrc')
+         '$(cat zshrc)" > ~/.zshrc')
 
 
 def call(op):
@@ -57,6 +57,9 @@ def print_error(text):
 if platform.system() != "Darwin":
     print_error("Linux or Windows is not supported yet")
     sys.exit()
+
+if validate("Do you want to override bash_alisases?"):
+    call("cp bash_aliases ../.bash_aliases")
 
 if not has_program("brew"):
     if validate("brew not detected. Do you want to install brew?"):
