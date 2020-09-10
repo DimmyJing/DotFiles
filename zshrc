@@ -10,16 +10,17 @@ export LANG=en_US.UTF-8
 # Set default editor
 export EDITOR='nvim'
 # Aliases
-alias pip3update='pip3 install --upgrade $(pip3 freeze | sed "s/\(.*\)==.*/\1/g")'
 alias killfacetime="killall -kill FaceTimeNotificationCenterService"
 alias src="cd ~/Program/src"
-alias doc="cd ~/Program/doc"
 alias vi="nvim"
+alias yui="yarn upgrade-interactive --latest"
+alias nwjs="~/TermApps/nwjs.app/Contents/MacOS/nwjs ."
+alias nwjsdebug="~/TermApps/nwjs.app/Contents/MacOS/nwjs . --remote-debugging-port=9222"
 # PATH exports
 export PATH="$PATH:/Library/Developer/CommandLineTools/usr/bin"
-export PATH="~/TermApps/bin:$PATH"
 export PATH="/usr/local/opt/python/libexec/bin:$PATH"
+export JAVA_HOME=$(/usr/libexec/java_home -v 1.8.0_251)
 # Call neofetch
-neofetch
+neofetch --backend iterm2 --source ~/Pictures/wwy.jpg
 # Initialize auto completion
 compinit
