@@ -27,3 +27,4 @@ if __name__ == "__main__":
     call("cp ~/.local/share/nvim/.ycm_extra_conf.py ycm_extra_conf.py")
     call("cp ~/.oh-my-zsh/themes/angle.zsh-theme .")
     call("cp ~/.zshrc zshrc")
+    call("cp ~/.tmux.conf tmux.conf")

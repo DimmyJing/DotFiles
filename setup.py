@@ -74,7 +74,7 @@ if __name__ == "__main__":
     if not has_program("nvim"):
         if validate("do you want to install neovim?"):
             call("brew install neovim")
-            call("pip3 install pynvim")
+            call("pip3 install neovim")
             setupvim()
     else:
         if validate("do you want to setup neovim?"):
@@ -91,3 +91,10 @@ if __name__ == "__main__":
         if validate("do you want to setup zsh?"):
             call("brew install zsh")
             setupzsh()
+
+    if not has_program("tmux"):
+        if validate("do you want to install tmux?"):
+            call("brew install tmux")
+            call("cp tmux.conf ~/.tmux.conf")
+    else:
+        call("cp tmux.conf ~/.tmux.conf")

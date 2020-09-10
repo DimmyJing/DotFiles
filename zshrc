@@ -21,6 +21,6 @@ export PATH="$PATH:/Library/Developer/CommandLineTools/usr/bin"
 export PATH="/usr/local/opt/python/libexec/bin:$PATH"
 export JAVA_HOME=$(/usr/libexec/java_home -v 1.8.0_251)
 # Call neofetch
-neofetch --backend iterm2 --source ~/Pictures/wwy.jpg
+# neofetch --backend iterm2 --source ~/Pictures/wwy.jpg
 # Initialize auto completion
 compinit
