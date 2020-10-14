@@ -80,6 +80,7 @@ nnoremap s @@
 
 
 " let g:loaded_youcompleteme = 1
+" let g:loaded_lightline = 1
 
 
 augroup YCM
