@@ -209,6 +209,14 @@ require('lazy').setup({
     build = ':TSUpdate',
   },
 
+  {
+    'github/copilot.vim',
+    config = function()
+      vim.g.copilot_assume_mapped = true
+    end
+  },
+
+
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
@@ -530,6 +538,8 @@ cmp.setup {
         cmp.select_next_item()
       elseif luasnip.expand_or_locally_jumpable() then
         luasnip.expand_or_jump()
+      elseif vim.b['_copilot_completion'] ~= nil then
+        vim.fn.feedkeys(vim.api.nvim_replace_termcodes(vim.fn['copilot#Accept'](), true, true, true), '')
       else
         fallback()
       end
