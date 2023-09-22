@@ -74,6 +74,9 @@ require('lazy').setup({
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
 
+  -- provide json schemas
+  'b0o/schemastore.nvim',
+
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
   {
@@ -217,13 +220,40 @@ require('lazy').setup({
   },
 
   {
-    "nvim-neo-tree/neo-tree.nvim",
-    branch = "v3.x",
+    'nvim-neo-tree/neo-tree.nvim',
+    branch = 'v3.x',
     dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-      "MunifTanjim/nui.nvim",
-    }
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
+      'MunifTanjim/nui.nvim',
+    },
+    config = function()
+      require('neo-tree').setup {
+        enable_git_status = true,
+        enable_diagnostics = true,
+        window = {
+          mappings = {
+            -- this mapping will close the neotree window if a file is selected
+            ["l"] = function(state)
+              local function close_if_file()
+                local tree = state.tree
+                local success, node = pcall(tree.get_node, tree)
+                print(not node:has_children())
+                if node.type == "message" or not (success and node) or node.type == "directory" or node:has_children() then
+                  return
+                end
+                state.commands["close_window"](state)
+              end
+
+              state.commands["open"](state)
+              close_if_file()
+            end,
+            ["h"] = "close_node",
+          },
+        },
+      }
+      vim.keymap.set('n', '<leader>n', '<Cmd>Neotree toggle<CR>', { desc = 'Toggle [N]eoTree' })
+    end
   },
 
 
@@ -231,7 +261,7 @@ require('lazy').setup({
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
   require 'kickstart.plugins.autoformat',
-  require 'kickstart.plugins.debug',
+  -- require 'kickstart.plugins.debug',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    You can use this folder to prevent any conflicts with this init.lua if you're interested in keeping
@@ -287,6 +317,7 @@ vim.o.completeopt = 'menuone,noselect'
 vim.o.termguicolors = true
 
 vim.o.tabstop = 4
+vim.o.shiftwidth = 4
 
 -- [[ Basic Keymaps ]]
 
@@ -478,15 +509,30 @@ local servers = {
       nilness = true,
       unusedwrite = true,
       useany = true,
-      unusedvariable = true
+      unusedvariable = true,
     },
     staticcheck = true,
     gofumpt = true,
   },
   -- pyright = {},
   -- rust_analyzer = {},
-  -- tsserver = {},
+  tsserver = {},
   -- html = { filetypes = { 'html', 'twig', 'hbs'} },
+  jsonls = {
+    json = {
+      schemas = require('schemastore').json.schemas {
+        extra = {
+          {
+            description = "valise schema",
+            fileMatch = "*.schema.json",
+            name = "valise",
+            url = "https://raw.githubusercontent.com/DimmyJing/valise/main/jsonschema/schema.json",
+          }
+        },
+      },
+      validate = true,
+    },
+  },
 
   lua_ls = {
     Lua = {
