@@ -10,6 +10,7 @@ export PATH="$PATH:$HOME/.bun/bin"
 export PATH="$PATH:$HOME/.asdf/installs/fzf/0.42.0/bin"
 export PATH="$PATH:$HOME/.asdf/installs/golang/1.21.0/packages/bin"
 export PATH="$PATH:$HOME/.local/bin"
+export PATH="$PATH:$HOME/Workspace/competitive/aoc/bin"
 export CFLAGS="-I/opt/homebrew/include/ -I$HOME/.local/include -L/opt/homebrew/lib/"
 export CPPFLAGS="-I/opt/homebrew/include/ -I$HOME/.local/include -L/opt/homebrew/lib/"
 export LDFLAGS="-I/opt/homebrew/include/ -I$HOME/.local/include -L/opt/homebrew/lib/"
@@ -30,7 +31,7 @@ alias gpt="~/Workspace/misc/gpt/gpt"
 alias gpt-server="cd ~/Workspace/misc/chatbot-ui/dist && bun run index.js"
 alias gotestcov="go test -coverprofile /tmp/cover.out && go tool cover -html=/tmp/cover.out"
 alias gosrc="cd ~/.asdf/installs/golang/1.21.0/packages/pkg/mod"
-bindkey -v
+# bindkey -v
 
 source "$HOME/.oh-my-zsh/oh-my-zsh.sh"
 
@@ -62,3 +63,8 @@ eval $(thefuck --alias)
 eval $(minikube -p minikube docker-env)
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# bun completions
+[ -s "/Users/jimmy/.bun/_bun" ] && source "/Users/jimmy/.bun/_bun"
+
+[ -f "/Users/jimmy/.ghcup/env" ] && source "/Users/jimmy/.ghcup/env" # ghcup-env

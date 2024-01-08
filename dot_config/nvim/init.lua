@@ -4,7 +4,7 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
--- Install package manager
+-- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -20,6 +20,7 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- [[ Configure plugins ]]
 -- NOTE: Here is where you install your plugins.
 --  You can configure plugins using the `config` key.
 --
@@ -53,7 +54,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
+      { 'j-hui/fidget.nvim', opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -223,6 +224,7 @@ require('lazy').setup({
         enable_git_status = true,
         enable_diagnostics = true,
         window = {
+          width = 40,
           mappings = {
             -- this mapping will close the neotree window if a file is selected
             ["l"] = function(state)
@@ -259,20 +261,86 @@ require('lazy').setup({
     end
   },
 
+  {
+    'neovim/nvim-lspconfig',
+    config = function()
+      -- Switch for controlling whether you want autoformatting.
+      --  Use :KickstartFormatToggle to toggle autoformatting on or off
+      local format_is_enabled = true
+      vim.api.nvim_create_user_command('KickstartFormatToggle', function()
+        format_is_enabled = not format_is_enabled
+        print('Setting autoformatting to: ' .. tostring(format_is_enabled))
+      end, {})
 
-  -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
-  --       These are some example plugins that I've included in the kickstart repository.
-  --       Uncomment any of the lines below to enable them.
-  require 'kickstart.plugins.autoformat',
-  -- require 'kickstart.plugins.debug',
+      -- Create an augroup that is used for managing our formatting autocmds.
+      --      We need one augroup per client to make sure that multiple clients
+      --      can attach to the same buffer without interfering with each other.
+      local _augroups = {}
+      local get_augroup = function(client)
+        if not _augroups[client.id] then
+          local group_name = 'kickstart-lsp-format-' .. client.name
+          local id = vim.api.nvim_create_augroup(group_name, { clear = true })
+          _augroups[client.id] = id
+        end
 
-  -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  --    You can use this folder to prevent any conflicts with this init.lua if you're interested in keeping
-  --    up-to-date with whatever is in the kickstart repo.
-  --    Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  --
-  --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
-  -- { import = 'custom.plugins' },
+        return _augroups[client.id]
+      end
+
+      -- Whenever an LSP attaches to a buffer, we will run this function.
+      --
+      -- See `:help LspAttach` for more information about this autocmd event.
+      vim.api.nvim_create_autocmd('LspAttach', {
+        group = vim.api.nvim_create_augroup('kickstart-lsp-attach-format', { clear = true }),
+        -- This is where we attach the autoformatting for reasonable clients
+        callback = function(args)
+          local client_id = args.data.client_id
+          local client = vim.lsp.get_client_by_id(client_id)
+          local bufnr = args.buf
+
+          -- Only attach to clients that support document formatting
+          if not client.server_capabilities.documentFormattingProvider then
+            return
+          end
+
+          -- Tsserver usually works poorly. Sorry you work with bad languages
+          -- You can remove this line if you know what you're doing :)
+          if client.name == 'tsserver' then
+            return
+          end
+
+          -- Create an autocmd that will run *before* we save the buffer.
+          --  Run the formatting command for the LSP that has just attached.
+          vim.api.nvim_create_autocmd('BufWritePre', {
+            group = get_augroup(client),
+            buffer = bufnr,
+            callback = function()
+              if not format_is_enabled then
+                return
+              end
+
+              vim.lsp.buf.format {
+                async = false,
+                filter = function(c)
+                  return c.id == client.id
+                end,
+              }
+            end,
+          })
+        end,
+      })
+    end,
+  },
+
+  {
+    'hashivim/vim-terraform',
+  },
+
+  {
+    'lifepillar/pgsql.vim',
+    config = function()
+      vim.g.sql_type_default = 'pgsql'
+    end,
+  },
 }, {})
 
 -- [[ Setting options ]]
@@ -287,6 +355,8 @@ vim.wo.number = true
 
 -- Added relative numbers
 vim.wo.relativenumber = true
+
+vim.wo.scrolloff = 8
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
@@ -328,12 +398,33 @@ vim.o.shiftwidth = 4
 -- See `:help vim.keymap.set()`
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
+vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
+vim.keymap.set("n", "<leader>Y", [["+Y]])
+vim.keymap.set({ "n", "v" }, "<leader>d", [["+d]])
+
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- Map for terminal mode
-vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { silent = true })
+vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { silent = true })
+
+vim.api.nvim_create_autocmd("TermOpen", {
+  pattern = "*",
+  callback = function()
+    -- send startinsert
+    vim.cmd("startinsert")
+    vim.opt_local.number = false
+    vim.opt_local.relativenumber = false
+    vim.opt_local.signcolumn = "no"
+  end,
+})
+
+-- Diagnostic keymaps
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -362,6 +453,42 @@ require('telescope').setup {
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 
+-- Telescope live_grep in git root
+-- Function to find the git root directory based on the current buffer's path
+local function find_git_root()
+  -- Use the current buffer's path as the starting point for the git search
+  local current_file = vim.api.nvim_buf_get_name(0)
+  local current_dir
+  local cwd = vim.fn.getcwd()
+  -- If the buffer is not associated with a file, return nil
+  if current_file == "" then
+    current_dir = cwd
+  else
+    -- Extract the directory from the current file's path
+    current_dir = vim.fn.fnamemodify(current_file, ":h")
+  end
+
+  -- Find the Git root directory from the current file's path
+  local git_root = vim.fn.systemlist("git -C " .. vim.fn.escape(current_dir, " ") .. " rev-parse --show-toplevel")[1]
+  if vim.v.shell_error ~= 0 then
+    print("Not a git repository. Searching on current working directory")
+    return cwd
+  end
+  return git_root
+end
+
+-- Custom live_grep function to search in git root
+local function live_grep_git_root()
+  local git_root = find_git_root()
+  if git_root then
+    require('telescope.builtin').live_grep({
+      search_dirs = { git_root },
+    })
+  end
+end
+
+vim.api.nvim_create_user_command('LiveGrepGitRoot', live_grep_git_root, {})
+
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
 vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
@@ -379,6 +506,7 @@ vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { des
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
+vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
 
@@ -392,7 +520,7 @@ vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
     ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim',
-      'bash' },
+      'bash', 'templ' },
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
@@ -454,12 +582,6 @@ vim.defer_fn(function()
     },
   }
 end, 0)
-
--- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
@@ -555,9 +677,41 @@ local servers = {
     Lua = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
+      -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+      -- diagnostics = { disable = { 'missing-fields' } },
+    },
+  },
+
+  rust_analyzer = {
+  },
+
+  hls = {
+  },
+
+  elixirls = {},
+
+  zls = {},
+
+  templ = {},
+
+  tailwindcss = {
+    filetypes = {
+      'templ', 'html', 'javascriptreact', 'typescriptreact', 'javascript', 'typescript'
+    },
+    init_options = {
+      userLanguages = {
+        templ = 'html',
+      },
+    },
+    settings = {
+      includeLanguages = {
+        templ = 'html',
+      },
     },
   },
 }
+
+vim.filetype.add({ extension = { templ = 'templ' } })
 
 -- Setup neovim lua configuration
 require('neodev').setup()
@@ -598,6 +752,9 @@ cmp.setup {
       luasnip.lsp_expand(args.body)
     end,
   },
+  completion = {
+    completeopt = 'menu,menuone,noinsert',
+  },
   mapping = cmp.mapping.preset.insert {
     ['<C-n>'] = cmp.mapping.select_next_item(),
     ['<C-p>'] = cmp.mapping.select_prev_item(),
@@ -634,6 +791,8 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
+
+-- vim.lsp.set_log_level("debug")
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
